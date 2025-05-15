@@ -12,6 +12,7 @@ import com.vacinacao.agvacinacao.repository.PacienteRepository;
 import com.vacinacao.agvacinacao.repository.VacinaRepository;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 
@@ -99,4 +100,16 @@ public class AgendamentoService {
     public List<Agendamento> listarPendentes() {
         return agendamentoRepository.findByConfirmadoFalse();
     }
+
+    public List<Agendamento> buscarAgendamentosComReaplicacaoVencida() {
+    List<Agendamento> agendamentos = agendamentoRepository.findAll()
+            .stream()
+            .filter(Agendamento::isConfirmado)
+            .filter(ag -> {
+                long diasDesdeAplicacao = ChronoUnit.DAYS.between(ag.getDataAplicacao(), LocalDate.now());
+                return diasDesdeAplicacao >= ag.getVacina().getDiasParaReaplicacao();
+            })
+            .toList();
+    return agendamentos;
+}
 }

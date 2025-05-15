@@ -46,4 +46,10 @@ public class AgendamentoController {
         List<Agendamento> pendentes = agendamentoService.listarPendentes();
         return pendentes.stream().map(AgendamentoDTO::new).collect(Collectors.toList());
     }
+
+    @GetMapping("/alertas-reaplicacao")
+    public List<AgendamentoDTO> listarAgendamentosVencidos() {
+        List<Agendamento> vencidos = agendamentoService.buscarAgendamentosComReaplicacaoVencida();
+        return vencidos.stream().map(AgendamentoDTO::new).collect(Collectors.toList());
+    }
 }
