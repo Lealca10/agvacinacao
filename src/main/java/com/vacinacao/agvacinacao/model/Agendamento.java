@@ -3,8 +3,6 @@ package com.vacinacao.agvacinacao.model;
 import java.time.LocalDate;
 
 import jakarta.persistence.*;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.GeneratedValue;
 
 @Entity
 public class Agendamento {
@@ -23,6 +21,9 @@ public class Agendamento {
 
     @ManyToOne
     private Usuario usuarioConfirmador;
+
+    @Enumerated(EnumType.STRING)
+    private StatusAgendamento status;
 
     // getters e setters
     public Long getId() {
