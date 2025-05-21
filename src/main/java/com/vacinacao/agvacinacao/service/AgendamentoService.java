@@ -2,13 +2,15 @@ package com.vacinacao.agvacinacao.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.vacinacao.agvacinacao.dto.AgendamentoDTO;
 import com.vacinacao.agvacinacao.model.Agendamento;
 import com.vacinacao.agvacinacao.model.Paciente;
+import com.vacinacao.agvacinacao.model.StatusAgendamento;
+import com.vacinacao.agvacinacao.model.Usuario;
 import com.vacinacao.agvacinacao.model.Vacina;
 import com.vacinacao.agvacinacao.repository.AgendamentoRepository;
 import com.vacinacao.agvacinacao.repository.PacienteRepository;
+import com.vacinacao.agvacinacao.repository.UsuarioRepository;
 import com.vacinacao.agvacinacao.repository.VacinaRepository;
 
 import java.time.LocalDate;
@@ -27,6 +29,9 @@ public class AgendamentoService {
 
     @Autowired
     private VacinaRepository vacinaRepository;
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
 
     // Listar todos os agendamentos
     public List<Agendamento> listarTodos() {
@@ -66,13 +71,19 @@ public class AgendamentoService {
     // Confirmar aplicação da vacina
     public Agendamento confirmarAplicacao(Long agendamentoId, Long usuarioConfirmadorId) {
         Optional<Agendamento> agendamentoOptional = agendamentoRepository.findById(agendamentoId);
-        if (agendamentoOptional.isPresent()) {
+        Optional<Usuario> usuarioOptional = usuarioRepository.findById(usuarioConfirmadorId);
+
+        if (agendamentoOptional.isPresent() && usuarioOptional.isPresent()) {
             Agendamento agendamento = agendamentoOptional.get();
+            Usuario usuario = usuarioOptional.get(); // <- define a variável corretamente
+
             agendamento.setConfirmado(true);
+            agendamento.setUsuarioConfirmador(usuario);
+            agendamento.setStatus(StatusAgendamento.APLICADA);
 
             return agendamentoRepository.save(agendamento);
         } else {
-            throw new RuntimeException("Agendamento não encontrado!");
+            throw new RuntimeException("Agendamento ou usuário não encontrado!");
         }
     }
 
@@ -93,6 +104,7 @@ public class AgendamentoService {
         agendamento.setPaciente(paciente);
         agendamento.setVacina(vacina);
         agendamento.setConfirmado(false);
+        agendamento.setStatus(StatusAgendamento.AGENDADO);
 
         return agendamentoRepository.save(agendamento);
     }
@@ -102,14 +114,20 @@ public class AgendamentoService {
     }
 
     public List<Agendamento> buscarAgendamentosComReaplicacaoVencida() {
-    List<Agendamento> agendamentos = agendamentoRepository.findAll()
-            .stream()
-            .filter(Agendamento::isConfirmado)
-            .filter(ag -> {
-                long diasDesdeAplicacao = ChronoUnit.DAYS.between(ag.getDataAplicacao(), LocalDate.now());
-                return diasDesdeAplicacao >= ag.getVacina().getDiasParaReaplicacao();
-            })
-            .toList();
-    return agendamentos;
-}
+        List<Agendamento> agendamentos = agendamentoRepository.findAll()
+                .stream()
+                .filter(Agendamento::isConfirmado)
+                .filter(ag -> {
+                    long diasDesdeAplicacao = ChronoUnit.DAYS.between(ag.getDataAplicacao(), LocalDate.now());
+                    return diasDesdeAplicacao >= ag.getVacina().getDiasParaReaplicacao();
+                })
+                .toList();
+        return agendamentos;
+    }
+
+    public List<Agendamento> buscarPorStatus(StatusAgendamento status) {
+        return agendamentoRepository.findByStatus(status);
+    }
+
+    
 }

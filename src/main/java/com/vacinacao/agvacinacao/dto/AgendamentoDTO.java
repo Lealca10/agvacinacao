@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
 import com.vacinacao.agvacinacao.model.Agendamento;
+import com.vacinacao.agvacinacao.model.StatusAgendamento;
 
 public class AgendamentoDTO {
     private Long id;
@@ -12,6 +13,7 @@ public class AgendamentoDTO {
     private LocalDate dataAplicacao;
     private boolean confirmado;
     private long diasEmAtraso;
+    private StatusAgendamento status;
 
     public AgendamentoDTO() {
     }
@@ -22,6 +24,7 @@ public class AgendamentoDTO {
         this.vacinaId = agendamento.getVacina().getId();
         this.dataAplicacao = agendamento.getDataAplicacao();
         this.confirmado = agendamento.isConfirmado();
+        this.status = agendamento.getStatus();
 
         long diasDesde = ChronoUnit.DAYS.between(dataAplicacao, LocalDate.now());
         this.diasEmAtraso = diasDesde - agendamento.getVacina().getDiasParaReaplicacao();
@@ -68,12 +71,20 @@ public class AgendamentoDTO {
     public void setConfirmado(boolean confirmado) {
         this.confirmado = confirmado;
     }
-    
+
     public long getDiasEmAtraso() {
         return diasEmAtraso;
     }
 
     public void setDiasEmAtraso(long diasEmAtraso) {
         this.diasEmAtraso = diasEmAtraso;
+    }
+
+    public StatusAgendamento getStatus() {
+        return status;
+    }
+
+    public void setStatus(StatusAgendamento status) {
+        this.status = status;
     }
 }

@@ -74,5 +74,11 @@ public class Agendamento {
         this.usuarioConfirmador = usuarioConfirmador;
     }
 
-    
+    public StatusAgendamento getStatus() {
+        return status;
+    }
+
+    public void setStatus(StatusAgendamento status) {
+        this.status = status;
+    }
 }

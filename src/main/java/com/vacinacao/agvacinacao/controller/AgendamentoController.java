@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.vacinacao.agvacinacao.dto.AgendamentoDTO;
 import com.vacinacao.agvacinacao.model.Agendamento;
+import com.vacinacao.agvacinacao.model.StatusAgendamento;
 import com.vacinacao.agvacinacao.service.AgendamentoService;
 
 import java.util.List;
@@ -51,5 +52,11 @@ public class AgendamentoController {
     public List<AgendamentoDTO> listarAgendamentosVencidos() {
         List<Agendamento> vencidos = agendamentoService.buscarAgendamentosComReaplicacaoVencida();
         return vencidos.stream().map(AgendamentoDTO::new).collect(Collectors.toList());
+    }
+
+    @GetMapping("/status/{status}")
+    public List<AgendamentoDTO> listarPorStatus(@PathVariable StatusAgendamento status) {
+        List<Agendamento> lista = agendamentoService.buscarPorStatus(status);
+        return lista.stream().map(AgendamentoDTO::new).collect(Collectors.toList());
     }
 }
