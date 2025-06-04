@@ -1,6 +1,7 @@
 package com.vacinacao.agvacinacao.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.vacinacao.agvacinacao.dto.UsuarioDTO;
@@ -15,6 +16,9 @@ public class UsuarioService {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     // Listar todos os usuários
     public List<Usuario> listarTodos() {
@@ -32,24 +36,33 @@ public class UsuarioService {
     }
 
     // Cadastrar novo usuário
-    public Usuario cadastrar(Usuario usuario) {
-        // Verifica se o email já foi usado
-        Optional<Usuario> existente = usuarioRepository.findByEmail(usuario.getEmail());
-        if (existente.isPresent()) {
-            throw new RuntimeException("Email já cadastrado: " + usuario.getEmail());
+    public Usuario cadastrar(UsuarioDTO usuarioDTO) {
+        if (usuarioRepository.findByEmail(usuarioDTO.getEmail()).isPresent()) {
+            throw new RuntimeException("Email já cadastrado: " + usuarioDTO.getEmail());
         }
+
+        Usuario usuario = new Usuario();
+        usuario.setNome(usuarioDTO.getNome());
+        usuario.setEmail(usuarioDTO.getEmail());
+        usuario.setSenha(passwordEncoder.encode(usuarioDTO.getSenha())); // Criptografa!
+        usuario.setTipo(usuarioDTO.getTipo());
+
         return usuarioRepository.save(usuario);
     }
 
     // Atualizar usuário
-    public Usuario atualizar(Long id, Usuario usuarioAtualizado) {
+    public Usuario atualizar(Long id, UsuarioDTO usuarioDTO) {
         Optional<Usuario> usuarioOptional = usuarioRepository.findById(id);
         if (usuarioOptional.isPresent()) {
             Usuario usuarioExistente = usuarioOptional.get();
-            usuarioExistente.setNome(usuarioAtualizado.getNome());
-            usuarioExistente.setEmail(usuarioAtualizado.getEmail());
-            usuarioExistente.setSenha(usuarioAtualizado.getSenha());
-            usuarioExistente.setTipo(usuarioAtualizado.getTipo());
+            usuarioExistente.setNome(usuarioDTO.getNome());
+            usuarioExistente.setEmail(usuarioDTO.getEmail());
+            usuarioExistente.setTipo(usuarioDTO.getTipo());
+
+            if (usuarioDTO.getSenha() != null && !usuarioDTO.getSenha().isEmpty()) {
+                usuarioExistente.setSenha(passwordEncoder.encode(usuarioDTO.getSenha())); // Criptografa!
+            }
+
             return usuarioRepository.save(usuarioExistente);
         } else {
             throw new RuntimeException("Usuário não encontrado com ID: " + id);
@@ -60,14 +73,5 @@ public class UsuarioService {
     public void deletar(Long id) {
         usuarioRepository.deleteById(id);
     }
-
-    public Usuario criarUsuario(UsuarioDTO usuarioDTO) {
-        Usuario usuario = new Usuario();
-        usuario.setNome(usuarioDTO.getNome());
-        usuario.setEmail(usuarioDTO.getEmail());
-        usuario.setSenha(usuarioDTO.getSenha());
-        usuario.setTipo(usuarioDTO.getTipo());
-
-        return usuarioRepository.save(usuario);
-    }
 }
+

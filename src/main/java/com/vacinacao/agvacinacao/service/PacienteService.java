@@ -1,11 +1,15 @@
 package com.vacinacao.agvacinacao.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.vacinacao.agvacinacao.dto.PacienteDTO;
 import com.vacinacao.agvacinacao.model.Paciente;
+import com.vacinacao.agvacinacao.model.TipoUsuario;
+import com.vacinacao.agvacinacao.model.Usuario;
 import com.vacinacao.agvacinacao.repository.PacienteRepository;
+import com.vacinacao.agvacinacao.repository.UsuarioRepository;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,6 +19,12 @@ public class PacienteService {
 
     @Autowired
     private PacienteRepository pacienteRepository;
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     // Listar todos os pacientes
     public List<Paciente> listarTodos() {
@@ -31,14 +41,34 @@ public class PacienteService {
         return pacienteRepository.findByCpf(cpf);
     }
 
-    // Cadastrar novo paciente
-    public Paciente cadastrar(Paciente paciente) {
-        
-        // Regra para validar se já existe um paciente com esse CPF
-        Optional<Paciente> existente = pacienteRepository.findByCpf(paciente.getCpf());
-        if (existente.isPresent()) {
-            throw new RuntimeException("Paciente com CPF já cadastrado: " + paciente.getCpf());
+    // Cadastrar novo paciente com criação de usuário
+    public Paciente criarPaciente(PacienteDTO dto) {
+
+        // Verifica se CPF já existe
+        if (pacienteRepository.findByCpf(dto.getCpf()).isPresent()) {
+            throw new RuntimeException("Paciente com CPF já cadastrado: " + dto.getCpf());
         }
+
+        // Cria o usuário
+        Usuario usuario = new Usuario();
+        usuario.setNome(dto.getNome());
+        usuario.setEmail(dto.getEmail());
+        usuario.setSenha(passwordEncoder.encode(dto.getSenha()));
+        usuario.setTipo(TipoUsuario.PACIENTE);
+        usuario = usuarioRepository.save(usuario);
+
+        // Cria o paciente
+        Paciente paciente = new Paciente();
+        paciente.setNome(dto.getNome());
+        paciente.setCpf(dto.getCpf());
+        paciente.setDataNascimento(dto.getDataNascimento());
+        paciente.setRua(dto.getRua());
+        paciente.setNumero(dto.getNumero());
+        paciente.setBairro(dto.getBairro());
+        paciente.setCidade(dto.getCidade());
+        paciente.setEstado(dto.getEstado());
+        paciente.setUsuario(usuario);
+
         return pacienteRepository.save(paciente);
     }
 
@@ -64,19 +94,5 @@ public class PacienteService {
     // Deletar paciente
     public void deletar(Long id) {
         pacienteRepository.deleteById(id);
-    }
-
-    public Paciente criarPaciente(PacienteDTO pacienteDTO) {
-        Paciente paciente = new Paciente();
-        paciente.setNome(pacienteDTO.getNome());
-        paciente.setCpf(pacienteDTO.getCpf());
-        paciente.setDataNascimento(pacienteDTO.getDataNascimento());
-        paciente.setRua(pacienteDTO.getRua());
-        paciente.setNumero(pacienteDTO.getNumero());
-        paciente.setBairro(pacienteDTO.getBairro());
-        paciente.setCidade(pacienteDTO.getCidade());
-        paciente.setEstado(pacienteDTO.getEstado());
-
-        return pacienteRepository.save(paciente);
     }
 }

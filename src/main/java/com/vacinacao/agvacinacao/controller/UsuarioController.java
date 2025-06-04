@@ -20,7 +20,7 @@ public class UsuarioController {
     // Endpoint para cadastrar novo usuário
     @PostMapping
     public UsuarioDTO criarUsuario(@RequestBody UsuarioDTO usuarioDTO) {
-        Usuario usuario = usuarioService.criarUsuario(usuarioDTO);
+        Usuario usuario = usuarioService.cadastrar(usuarioDTO);
         return new UsuarioDTO(usuario);
     }
 
@@ -29,5 +29,12 @@ public class UsuarioController {
     public List<UsuarioDTO> listarUsuarios() {
         List<Usuario> usuarios = usuarioService.listarTodos();
         return usuarios.stream().map(UsuarioDTO::new).collect(Collectors.toList());
+    }
+
+    @GetMapping("/{id}")
+    public UsuarioDTO buscarPorId(@PathVariable Long id) {
+        Usuario usuario = usuarioService.buscarPorId(id)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado!"));
+        return new UsuarioDTO(usuario); // Aqui não retorna a senha
     }
 }

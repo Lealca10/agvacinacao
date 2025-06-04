@@ -5,21 +5,23 @@ import java.time.LocalDate;
 import com.vacinacao.agvacinacao.model.Paciente;
 
 public class PacienteDTO {
-    private Long id;
+    // Dados de Usuário
     private String nome;
-    private LocalDate dataNascimento;
+    private String email;
+    private String senha;
+
+    // Dados do Paciente
     private String cpf;
+    private LocalDate dataNascimento;
     private String rua;
     private String numero;
     private String bairro;
     private String cidade;
     private String estado;
-    private Long usuarioId; 
 
     public PacienteDTO() {}
     
     public PacienteDTO(Paciente paciente) {
-        this.id = paciente.getId();
         this.nome = paciente.getNome();
         this.dataNascimento = paciente.getDataNascimento();
         this.cpf = paciente.getCpf();
@@ -30,12 +32,7 @@ public class PacienteDTO {
         this.estado = paciente.getEstado();
     }
     // Getters e Setters
-    public Long getId() {
-        return id;
-    }
-    public void setId(Long id) {
-        this.id = id;
-    }
+
     public String getNome() {
         return nome;
     }
@@ -84,12 +81,19 @@ public class PacienteDTO {
     public void setEstado(String estado) {
         this.estado = estado;
     }
-    public Long getUsuarioId() {
-        return usuarioId;
-    }
-    public void setUsuarioId(Long usuarioId) {
-        this.usuarioId = usuarioId;
+    public String getEmail() {
+        return email;
     }
 
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
+    public String getSenha() {
+        return senha;
+    }
+
+    public void setSenha(String senha) {
+        this.senha = senha;
+    }
 }

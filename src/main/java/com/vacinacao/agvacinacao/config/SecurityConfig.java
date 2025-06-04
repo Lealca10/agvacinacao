@@ -23,15 +23,15 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/login").permitAll()
-                .requestMatchers(HttpMethod.POST, "/api/usuarios").permitAll() // cadastro
-                .requestMatchers("/api/vacinas/**").hasAuthority("ADMIN")
-                .requestMatchers("/api/agendamentos/**").authenticated()
-                .requestMatchers("/api/pacientes/**").authenticated()
-                .anyRequest().authenticated()
-            )
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/auth/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/usuarios").permitAll() // cadastro usuário
+                        .requestMatchers(HttpMethod.POST, "/api/pacientes").permitAll() // cadastro paciente
+                        .requestMatchers("/api/vacinas/**").hasAuthority("ADMIN")
+                        .requestMatchers("/api/agendamentos/**").authenticated()
+                        .requestMatchers("/api/pacientes/**").authenticated() // protege os outros métodos de pacientes
+                        .anyRequest().authenticated())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
