@@ -1,6 +1,7 @@
 package com.vacinacao.agvacinacao.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.vacinacao.agvacinacao.dto.AgendamentoDTO;
@@ -28,6 +29,12 @@ public class AgendamentoController {
     public AgendamentoDTO confirmarAplicacao(@PathVariable Long id, @RequestParam Long usuarioConfirmadorId) {
         Agendamento agendamento = agendamentoService.confirmarAplicacao(id, usuarioConfirmadorId);
         return new AgendamentoDTO(agendamento);
+    }
+
+    @PutMapping("/{id}/cancelar")
+    public ResponseEntity<AgendamentoDTO> cancelar(@PathVariable Long id) {
+        Agendamento agendamento = agendamentoService.cancelarAgendamento(id);
+        return ResponseEntity.ok(new AgendamentoDTO(agendamento));
     }
 
     @GetMapping("/paciente/{pacienteId}")

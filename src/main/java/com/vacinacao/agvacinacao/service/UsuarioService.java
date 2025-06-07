@@ -69,9 +69,16 @@ public class UsuarioService {
         }
     }
 
+    public void alterarSenha(Long id, String novaSenha) {
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+        usuario.setSenha(passwordEncoder.encode(novaSenha));
+        usuarioRepository.save(usuario);
+    }
+
     // Deletar usuário
     public void deletar(Long id) {
         usuarioRepository.deleteById(id);
     }
 }
-

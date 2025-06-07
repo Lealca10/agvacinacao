@@ -86,6 +86,15 @@ public class AgendamentoService {
             throw new RuntimeException("Agendamento ou usuário não encontrado!");
         }
     }
+    
+    //Cancelar agendamento
+    public Agendamento cancelarAgendamento(Long id) {
+        Agendamento agendamento = agendamentoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Agendamento não encontrado"));
+
+        agendamento.setStatus(StatusAgendamento.CANCELADO);
+        return agendamentoRepository.save(agendamento);
+    }
 
     // Deletar agendamento
     public void deletar(Long id) {
@@ -129,5 +138,4 @@ public class AgendamentoService {
         return agendamentoRepository.findByStatus(status);
     }
 
-    
 }
