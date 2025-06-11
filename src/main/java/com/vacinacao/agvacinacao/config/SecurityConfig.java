@@ -27,6 +27,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/usuarios").permitAll() // cadastro usuário
                         .requestMatchers(HttpMethod.POST, "/api/pacientes").permitAll() // cadastro paciente
+                        .requestMatchers(HttpMethod.PUT, "/api/usuarios/recuperar-senha").permitAll() // Liberar o método de recuperar senha
                         .requestMatchers("/api/vacinas/**").hasAuthority("ADMIN")
                         .requestMatchers("/api/agendamentos/**").authenticated()
                         .requestMatchers("/api/pacientes/**").authenticated() // protege os outros métodos de pacientes
