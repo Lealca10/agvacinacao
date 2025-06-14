@@ -13,6 +13,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.config.Customizer;
 
 @Configuration
 public class SecurityConfig {
@@ -22,17 +23,19 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/usuarios").permitAll() // cadastro usuário
-                        .requestMatchers(HttpMethod.POST, "/api/pacientes").permitAll() // cadastro paciente
-                        .requestMatchers(HttpMethod.PUT, "/api/usuarios/recuperar-senha").permitAll() // Liberar o método de recuperar senha
-                        .requestMatchers("/api/vacinas/**").hasAuthority("ADMIN")
-                        .requestMatchers("/api/agendamentos/**").authenticated()
-                        .requestMatchers("/api/pacientes/**").authenticated() // protege os outros métodos de pacientes
-                        .anyRequest().authenticated())
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+        http
+            .cors(Customizer.withDefaults()) // <---- AQUI
+            .csrf(AbstractHttpConfigurer::disable)
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/api/auth/login").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/usuarios").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/pacientes").permitAll()
+                .requestMatchers(HttpMethod.PUT, "/api/usuarios/recuperar-senha").permitAll()
+                .requestMatchers("/api/vacinas/**").hasAuthority("ADMIN")
+                .requestMatchers("/api/agendamentos/**").hasAnyAuthority("ADMIN", "PACIENTE")
+                .requestMatchers("/api/pacientes/**").hasAnyAuthority("ADMIN", "PACIENTE")
+                .anyRequest().authenticated())
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 

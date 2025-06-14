@@ -11,6 +11,7 @@ public class PacienteDTO {
     private String senha;
 
     // Dados do Paciente
+    private Long id;
     private String cpf;
     private LocalDate dataNascimento;
     private String rua;
@@ -22,6 +23,7 @@ public class PacienteDTO {
     public PacienteDTO() {}
     
     public PacienteDTO(Paciente paciente) {
+        this.id = paciente.getId();
         this.nome = paciente.getNome();
         this.dataNascimento = paciente.getDataNascimento();
         this.cpf = paciente.getCpf();
@@ -32,6 +34,13 @@ public class PacienteDTO {
         this.estado = paciente.getEstado();
     }
     // Getters e Setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getNome() {
         return nome;
