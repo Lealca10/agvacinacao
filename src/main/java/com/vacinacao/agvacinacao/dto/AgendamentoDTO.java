@@ -11,7 +11,9 @@ import com.vacinacao.agvacinacao.model.StatusAgendamento;
 public class AgendamentoDTO {
     private Long id;
     private Long pacienteId;
+    private String pacienteNome;
     private Long vacinaId;
+    private String vacinaNome;
     private LocalDate dataAplicacao;
     @JsonFormat(pattern = "HH:mm")
     private LocalTime hora;
@@ -25,14 +27,20 @@ public class AgendamentoDTO {
     public AgendamentoDTO(Agendamento agendamento) {
         this.id = agendamento.getId();
         this.pacienteId = agendamento.getPaciente().getId();
+        this.pacienteNome = agendamento.getPaciente().getNome();
         this.vacinaId = agendamento.getVacina().getId();
+        this.vacinaNome = agendamento.getVacina().getNome();
         this.dataAplicacao = agendamento.getDataAplicacao();
         this.hora = agendamento.getHora();
         this.confirmado = agendamento.isConfirmado();
         this.status = agendamento.getStatus();
 
-        long diasDesde = ChronoUnit.DAYS.between(dataAplicacao, LocalDate.now());
-        this.diasEmAtraso = diasDesde - agendamento.getVacina().getDiasParaReaplicacao();
+        if (this.dataAplicacao != null && agendamento.getVacina() != null) {
+            long diasDesde = ChronoUnit.DAYS.between(this.dataAplicacao, LocalDate.now());
+            this.diasEmAtraso = diasDesde - agendamento.getVacina().getDiasParaReaplicacao();
+        } else {
+            this.diasEmAtraso = 0;
+        }
     }
 
     // Getters e Setters
@@ -101,5 +109,22 @@ public class AgendamentoDTO {
         this.hora = hora;
     }
 
+    public String getPacienteNome() {
+        return pacienteNome;
+    }
+
+    public void setPacienteNome(String pacienteNome) {
+        this.pacienteNome = pacienteNome;
+    }
+
+    public String getVacinaNome() {
+        return vacinaNome;
+    }
+
+    public void setVacinaNome(String vacinaNome) {
+        this.vacinaNome = vacinaNome;
+    }
+
     
+
 }
