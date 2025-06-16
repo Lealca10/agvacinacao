@@ -110,6 +110,7 @@ public class AgendamentoService {
 
         Agendamento agendamento = new Agendamento();
         agendamento.setDataAplicacao(agendamentoDTO.getDataAplicacao());
+        agendamento.setHora(agendamentoDTO.getHora());
         agendamento.setPaciente(paciente);
         agendamento.setVacina(vacina);
         agendamento.setConfirmado(false);

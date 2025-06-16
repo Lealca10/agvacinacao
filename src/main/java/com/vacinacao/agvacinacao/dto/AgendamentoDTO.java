@@ -1,8 +1,10 @@
 package com.vacinacao.agvacinacao.dto;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.vacinacao.agvacinacao.model.Agendamento;
 import com.vacinacao.agvacinacao.model.StatusAgendamento;
 
@@ -11,6 +13,8 @@ public class AgendamentoDTO {
     private Long pacienteId;
     private Long vacinaId;
     private LocalDate dataAplicacao;
+    @JsonFormat(pattern = "HH:mm")
+    private LocalTime hora;
     private boolean confirmado;
     private long diasEmAtraso;
     private StatusAgendamento status;
@@ -23,6 +27,7 @@ public class AgendamentoDTO {
         this.pacienteId = agendamento.getPaciente().getId();
         this.vacinaId = agendamento.getVacina().getId();
         this.dataAplicacao = agendamento.getDataAplicacao();
+        this.hora = agendamento.getHora();
         this.confirmado = agendamento.isConfirmado();
         this.status = agendamento.getStatus();
 
@@ -87,4 +92,14 @@ public class AgendamentoDTO {
     public void setStatus(StatusAgendamento status) {
         this.status = status;
     }
+
+    public LocalTime getHora() {
+        return hora;
+    }
+
+    public void setHora(LocalTime hora) {
+        this.hora = hora;
+    }
+
+    
 }

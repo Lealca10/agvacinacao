@@ -1,6 +1,7 @@
 package com.vacinacao.agvacinacao.model;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 import jakarta.persistence.*;
 
@@ -17,6 +18,8 @@ public class Agendamento {
     private Vacina vacina;
 
     private LocalDate dataAplicacao;
+    @Column(name = "hora")
+    private LocalTime hora;
     private boolean confirmado;
 
     @ManyToOne
@@ -80,5 +83,13 @@ public class Agendamento {
 
     public void setStatus(StatusAgendamento status) {
         this.status = status;
+    }
+
+    public LocalTime getHora() {
+        return hora;
+    }
+
+    public void setHora(LocalTime hora) {
+        this.hora = hora;
     }
 }
