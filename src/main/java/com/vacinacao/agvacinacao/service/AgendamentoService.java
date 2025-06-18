@@ -86,8 +86,8 @@ public class AgendamentoService {
             throw new RuntimeException("Agendamento ou usuário não encontrado!");
         }
     }
-    
-    //Cancelar agendamento
+
+    // Cancelar agendamento
     public Agendamento cancelarAgendamento(Long id) {
         Agendamento agendamento = agendamentoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Agendamento não encontrado"));
@@ -107,6 +107,13 @@ public class AgendamentoService {
 
         Vacina vacina = vacinaRepository.findById(agendamentoDTO.getVacinaId())
                 .orElseThrow(() -> new RuntimeException("Vacina não encontrada"));
+
+        boolean existeDuplicado = agendamentoRepository.existsByPacienteAndVacinaAndDataAplicacaoAndHora(
+                paciente, vacina, agendamentoDTO.getDataAplicacao(), agendamentoDTO.getHora());
+
+        if (existeDuplicado) {
+            throw new RuntimeException("Já existe um agendamento para este paciente, vacina, data e hora.");
+        }
 
         Agendamento agendamento = new Agendamento();
         agendamento.setDataAplicacao(agendamentoDTO.getDataAplicacao());

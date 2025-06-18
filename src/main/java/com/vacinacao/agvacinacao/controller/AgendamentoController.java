@@ -66,4 +66,13 @@ public class AgendamentoController {
         List<Agendamento> lista = agendamentoService.buscarPorStatus(status);
         return lista.stream().map(AgendamentoDTO::new).collect(Collectors.toList());
     }
+
+    @ControllerAdvice
+    public class GlobalExceptionHandler {
+
+        @ExceptionHandler(RuntimeException.class)
+        public ResponseEntity<String> handleRuntime(RuntimeException ex) {
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        }
+    }
 }
