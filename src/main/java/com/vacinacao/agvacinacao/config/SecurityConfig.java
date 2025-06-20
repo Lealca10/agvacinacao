@@ -31,10 +31,12 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/api/usuarios").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/pacientes").permitAll()
                 .requestMatchers(HttpMethod.PUT, "/api/usuarios/recuperar-senha").permitAll()
+                .requestMatchers(HttpMethod.GET, "/doencas").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/agendamentos/meus").hasAnyAuthority("PACIENTE", "ADMIN")
                 .requestMatchers("/api/vacinas/**").hasAuthority("ADMIN")
                 .requestMatchers("/api/agendamentos/**").hasAnyAuthority("PACIENTE","ADMIN")
                 .requestMatchers("/api/pacientes/**").hasAnyAuthority("ADMIN", "PACIENTE")
+                .requestMatchers("/api/doencas/**").hasAuthority("ADMIN")
                 .anyRequest().authenticated())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 

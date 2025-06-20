@@ -16,18 +16,28 @@ public class DoencaService {
     private DoencaRepository doencaRepository;
 
     public DoencaDTO criarDoenca(DoencaDTO dto) {
-        Doenca doenca = new Doenca(dto.getNome(), dto.getData(), dto.getEndereco());
+        Doenca doenca = new Doenca(
+                dto.getNome(),
+                dto.getData(),
+                dto.getEndereco(),
+                dto.getCasos(),
+                dto.getSintomas(),
+                dto.getMedidasPreventivas());
+
         return new DoencaDTO(doencaRepository.save(doenca));
     }
 
     public DoencaDTO atualizarDoenca(Long id, DoencaDTO dto) {
         Doenca doenca = doencaRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Doença não encontrada com id: " + id));
-    
+                .orElseThrow(() -> new RuntimeException("Doença não encontrada com id: " + id));
+
         doenca.setNome(dto.getNome());
         doenca.setData(dto.getData());
         doenca.setEndereco(dto.getEndereco());
-    
+        doenca.setCasos(dto.getCasos());
+        doenca.setSintomas(dto.getSintomas());
+        doenca.setMedidasPreventivas(dto.getMedidasPreventivas());
+
         return new DoencaDTO(doencaRepository.save(doenca));
     }
 
