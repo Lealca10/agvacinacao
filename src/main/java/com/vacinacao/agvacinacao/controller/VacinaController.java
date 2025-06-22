@@ -20,7 +20,7 @@ public class VacinaController {
     @PostMapping
     public VacinaDTO criarVacina(@RequestBody VacinaDTO vacinaDTO) {
         Vacina vacina = vacinaService.criarVacina(vacinaDTO);
-        return new VacinaDTO(vacina); 
+        return new VacinaDTO(vacina);
     }
 
     @GetMapping
@@ -43,5 +43,10 @@ public class VacinaController {
     @PutMapping("/{id}/decrementar")
     public void decrementar(@PathVariable Long id, @RequestParam int quantidade) {
         vacinaService.decrementarQuantidade(id, quantidade);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deletarVacina(@PathVariable Long id) {
+        vacinaService.deletarVacina(id);
     }
 }

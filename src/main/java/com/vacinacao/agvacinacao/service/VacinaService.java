@@ -74,8 +74,9 @@ public class VacinaService {
     }
 
     // Deletar vacina
-    public void deletar(Long id) {
-        vacinaRepository.deleteById(id);
+    public void deletarVacina(Long id) {
+    Vacina vacina = buscarPorId(id);
+    vacinaRepository.delete(vacina);
     }
     
 }
