@@ -26,6 +26,6 @@ public class AuthService {
         // Para agora, vamos apenas retornar um "token fake" + tipo do usuário
         String fakeToken = "FAKE-TOKEN-FOR-" + usuario.getEmail();
 
-        return new LoginResponse(fakeToken, usuario.getTipo().name());
+        return new LoginResponse(fakeToken, usuario.getTipo().name(),usuario.getId(),usuario.getNome());
     }
 }
