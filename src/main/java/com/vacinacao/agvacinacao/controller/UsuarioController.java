@@ -11,6 +11,7 @@ import com.vacinacao.agvacinacao.model.Usuario;
 import com.vacinacao.agvacinacao.repository.UsuarioRepository;
 import com.vacinacao.agvacinacao.service.UsuarioService;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -75,4 +76,17 @@ public class UsuarioController {
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado!"));
         return new UsuarioDTO(usuario); // Aqui não retorna a senha
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Map<String, Object>> atualizarUsuario(@PathVariable Long id,
+            @RequestBody UsuarioDTO usuarioDTO) {
+        Usuario usuarioAtualizado = usuarioService.atualizar(id, usuarioDTO);
+
+        Map<String, Object> resposta = new HashMap<>();
+        resposta.put("mensagem", "Usuário atualizado com sucesso.");
+        resposta.put("usuario", usuarioAtualizado);
+
+        return ResponseEntity.ok(resposta);
+    }
+
 }
