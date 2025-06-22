@@ -6,7 +6,9 @@ import org.springframework.web.bind.annotation.*;
 
 import com.vacinacao.agvacinacao.dto.AgendamentoDTO;
 import com.vacinacao.agvacinacao.model.Agendamento;
+import com.vacinacao.agvacinacao.model.Paciente;
 import com.vacinacao.agvacinacao.model.StatusAgendamento;
+import com.vacinacao.agvacinacao.repository.PacienteRepository;
 import com.vacinacao.agvacinacao.service.AgendamentoService;
 
 import java.util.List;
@@ -18,6 +20,9 @@ public class AgendamentoController {
 
     @Autowired
     private AgendamentoService agendamentoService;
+
+    @Autowired
+    private PacienteRepository pacienteRepository;
 
     @PostMapping
     public AgendamentoDTO criarAgendamento(@RequestBody AgendamentoDTO agendamentoDTO) {
@@ -66,6 +71,18 @@ public class AgendamentoController {
         List<Agendamento> lista = agendamentoService.buscarPorStatus(status);
         return lista.stream().map(AgendamentoDTO::new).collect(Collectors.toList());
     }
+
+    @GetMapping("/usuario/{usuarioId}/status/{status}")
+    public List<AgendamentoDTO> buscarPorUsuarioEStatus(
+            @PathVariable Long usuarioId,
+            @PathVariable StatusAgendamento status) {
+
+        Paciente paciente = pacienteRepository.findByUsuarioId(usuarioId)
+            .orElseThrow(() -> new RuntimeException("Paciente não encontrado para o usuário " + usuarioId));
+
+        return agendamentoService.listarPorPacienteEStatus(paciente.getId(), status);
+    }
+
 
     @ControllerAdvice
     public class GlobalExceptionHandler {

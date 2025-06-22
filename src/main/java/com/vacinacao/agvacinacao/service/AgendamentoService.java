@@ -146,4 +146,11 @@ public class AgendamentoService {
         return agendamentoRepository.findByStatus(status);
     }
 
+    public List<AgendamentoDTO> listarPorPacienteEStatus(Long pacienteId, StatusAgendamento status) {
+    List<Agendamento> agendamentos = agendamentoRepository.findByPacienteIdAndStatus(pacienteId, status);
+    return agendamentos.stream()
+        .map(AgendamentoDTO::new)
+        .toList();
+}
+
 }

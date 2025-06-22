@@ -16,6 +16,7 @@ public interface AgendamentoRepository extends JpaRepository<Agendamento, Long> 
     List<Agendamento> findByPacienteId(Long pacienteId);
     List<Agendamento> findByConfirmadoFalse();
     List<Agendamento> findByStatus(StatusAgendamento status);
+    List<Agendamento> findByPacienteIdAndStatus(Long pacienteId, StatusAgendamento status);
 
     boolean existsByPacienteAndVacinaAndDataAplicacaoAndHora(
     Paciente paciente,
