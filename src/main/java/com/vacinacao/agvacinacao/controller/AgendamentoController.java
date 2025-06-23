@@ -53,6 +53,15 @@ public class AgendamentoController {
         return agendamentos.stream().map(AgendamentoDTO::new).collect(Collectors.toList());
     }
 
+    @GetMapping("/usuario/{usuarioId}")
+    public List<AgendamentoDTO> listarPorUsuario(@PathVariable Long usuarioId) {
+        Paciente paciente = pacienteRepository.findByUsuarioId(usuarioId)
+                .orElseThrow(() -> new RuntimeException("Paciente não encontrado para o usuário " + usuarioId));
+
+        List<Agendamento> agendamentos = agendamentoService.buscarPorPaciente(paciente.getId());
+        return agendamentos.stream().map(AgendamentoDTO::new).collect(Collectors.toList());
+    }
+
     @GetMapping
     public List<AgendamentoDTO> listarTodos() {
         List<Agendamento> agendamentos = agendamentoService.listarTodos();
