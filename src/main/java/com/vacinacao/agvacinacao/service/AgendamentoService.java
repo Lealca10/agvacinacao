@@ -17,6 +17,7 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class AgendamentoService {
@@ -147,10 +148,31 @@ public class AgendamentoService {
     }
 
     public List<AgendamentoDTO> listarPorPacienteEStatus(Long pacienteId, StatusAgendamento status) {
-    List<Agendamento> agendamentos = agendamentoRepository.findByPacienteIdAndStatus(pacienteId, status);
-    return agendamentos.stream()
-        .map(AgendamentoDTO::new)
-        .toList();
-}
+        List<Agendamento> agendamentos = agendamentoRepository.findByPacienteIdAndStatus(pacienteId, status);
+        return agendamentos.stream()
+                .map(AgendamentoDTO::new)
+                .toList();
+    }
+
+    public List<AgendamentoDTO> buscarAtrasadosPorUsuario(Long usuarioId) {
+        Optional<Paciente> pacienteOpt = pacienteRepository.findByUsuarioId(usuarioId);
+        if (pacienteOpt.isEmpty()) {
+            throw new RuntimeException("Paciente não encontrado para o usuário ID: " + usuarioId);
+        }
+
+        Long pacienteId = pacienteOpt.get().getId();
+        List<Agendamento> agendamentos = agendamentoRepository.findByPacienteId(pacienteId);
+
+        return agendamentos.stream()
+                .filter(a -> a.getStatus() == StatusAgendamento.AGENDADO)
+                .filter(a -> a.getDataAplicacao() != null && a.getDataAplicacao().isBefore(LocalDate.now()))
+                .map(dto -> {
+                    AgendamentoDTO agendamentoDTO = new AgendamentoDTO(dto);
+                    long diasAtraso = ChronoUnit.DAYS.between(agendamentoDTO.getDataAplicacao(), LocalDate.now());
+                    agendamentoDTO.setDiasEmAtraso(diasAtraso);
+                    return agendamentoDTO;
+                })
+                .collect(Collectors.toList());
+    }
 
 }

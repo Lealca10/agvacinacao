@@ -8,9 +8,11 @@ import com.vacinacao.agvacinacao.dto.AgendamentoDTO;
 import com.vacinacao.agvacinacao.model.Agendamento;
 import com.vacinacao.agvacinacao.model.Paciente;
 import com.vacinacao.agvacinacao.model.StatusAgendamento;
+import com.vacinacao.agvacinacao.repository.AgendamentoRepository;
 import com.vacinacao.agvacinacao.repository.PacienteRepository;
 import com.vacinacao.agvacinacao.service.AgendamentoService;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,6 +22,9 @@ public class AgendamentoController {
 
     @Autowired
     private AgendamentoService agendamentoService;
+
+    @Autowired
+    private AgendamentoRepository agendamentoRepository;
 
     @Autowired
     private PacienteRepository pacienteRepository;
@@ -78,11 +83,15 @@ public class AgendamentoController {
             @PathVariable StatusAgendamento status) {
 
         Paciente paciente = pacienteRepository.findByUsuarioId(usuarioId)
-            .orElseThrow(() -> new RuntimeException("Paciente não encontrado para o usuário " + usuarioId));
+                .orElseThrow(() -> new RuntimeException("Paciente não encontrado para o usuário " + usuarioId));
 
         return agendamentoService.listarPorPacienteEStatus(paciente.getId(), status);
     }
 
+    @GetMapping("/usuario/{usuarioId}/atrasados")
+    public List<AgendamentoDTO> buscarAtrasadosPorUsuario(@PathVariable Long usuarioId) {
+        return agendamentoService.buscarAtrasadosPorUsuario(usuarioId);
+    }
 
     @ControllerAdvice
     public class GlobalExceptionHandler {
