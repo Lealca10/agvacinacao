@@ -27,7 +27,7 @@ public class StartupRunner {
             if (usuarioRepository.findByEmail(email).isEmpty()) {
                 // Cria o usuário ADMIN
                 Usuario admin = new Usuario();
-                admin.setNome("Admin Padrão");
+                admin.setNome("Administrador");
                 admin.setEmail(email);
                 admin.setSenha(passwordEncoder.encode("123456"));
                 admin.setTipo(TipoUsuario.ADMIN);
@@ -35,7 +35,7 @@ public class StartupRunner {
 
                 // Cria o paciente vinculado ao usuário
                 Paciente paciente = new Paciente();
-                paciente.setNome("João Silva");
+                paciente.setNome("Administrador");
                 paciente.setCpf("12345678900");
                 paciente.setDataNascimento(LocalDate.of(1990, 5, 15));
                 paciente.setRua("Rua das Flores");
