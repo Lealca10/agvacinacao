@@ -5,14 +5,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.vacinacao.agvacinacao.dto.AgendamentoDTO;
+import com.vacinacao.agvacinacao.dto.AgendamentoUpdateDTO;
 import com.vacinacao.agvacinacao.model.Agendamento;
 import com.vacinacao.agvacinacao.model.Paciente;
 import com.vacinacao.agvacinacao.model.StatusAgendamento;
-import com.vacinacao.agvacinacao.repository.AgendamentoRepository;
 import com.vacinacao.agvacinacao.repository.PacienteRepository;
 import com.vacinacao.agvacinacao.service.AgendamentoService;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,15 +23,21 @@ public class AgendamentoController {
     private AgendamentoService agendamentoService;
 
     @Autowired
-    private AgendamentoRepository agendamentoRepository;
-
-    @Autowired
     private PacienteRepository pacienteRepository;
 
     @PostMapping
     public AgendamentoDTO criarAgendamento(@RequestBody AgendamentoDTO agendamentoDTO) {
         Agendamento agendamento = agendamentoService.criarAgendamento(agendamentoDTO);
         return new AgendamentoDTO(agendamento);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<AgendamentoDTO> atualizarAgendamento(
+            @PathVariable Long id,
+            @RequestBody AgendamentoUpdateDTO dto) {
+
+        Agendamento atualizado = agendamentoService.atualizarAgendamento(id, dto);
+        return ResponseEntity.ok(new AgendamentoDTO(atualizado));
     }
 
     @PutMapping("/{id}/confirmar")

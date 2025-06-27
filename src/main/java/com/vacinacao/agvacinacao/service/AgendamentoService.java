@@ -3,6 +3,7 @@ package com.vacinacao.agvacinacao.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.vacinacao.agvacinacao.dto.AgendamentoDTO;
+import com.vacinacao.agvacinacao.dto.AgendamentoUpdateDTO;
 import com.vacinacao.agvacinacao.model.Agendamento;
 import com.vacinacao.agvacinacao.model.Paciente;
 import com.vacinacao.agvacinacao.model.StatusAgendamento;
@@ -14,6 +15,7 @@ import com.vacinacao.agvacinacao.repository.UsuarioRepository;
 import com.vacinacao.agvacinacao.repository.VacinaRepository;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
@@ -173,6 +175,27 @@ public class AgendamentoService {
                     return agendamentoDTO;
                 })
                 .collect(Collectors.toList());
+    }
+
+    public Agendamento atualizarAgendamento(Long id, AgendamentoUpdateDTO dto) {
+        Agendamento agendamento = agendamentoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Agendamento não encontrado"));
+
+        if (dto.getVacinaId() != null) {
+            Vacina vacina = vacinaRepository.findById(dto.getVacinaId())
+                    .orElseThrow(() -> new RuntimeException("Vacina não encontrada"));
+            agendamento.setVacina(vacina);
+        }
+
+        if (dto.getDataAplicacao() != null) {
+            agendamento.setDataAplicacao(dto.getDataAplicacao());
+        }
+
+        if (dto.getHora() != null) {
+            agendamento.setHora(LocalTime.parse(dto.getHora()));
+        }
+
+        return agendamentoRepository.save(agendamento);
     }
 
 }

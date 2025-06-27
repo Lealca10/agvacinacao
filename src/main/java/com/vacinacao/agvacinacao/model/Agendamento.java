@@ -15,6 +15,7 @@ public class Agendamento {
     private Paciente paciente;
 
     @ManyToOne
+    @JoinColumn(name = "vacina_id")
     private Vacina vacina;
 
     private LocalDate dataAplicacao;
