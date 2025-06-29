@@ -2,7 +2,7 @@ package com.vacinacao.agvacinacao.model;
 
 import java.time.LocalDate;
 import jakarta.persistence.Id;
-
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -26,6 +26,7 @@ public class Paciente {
     private String estado;
 
     @OneToOne
+    @JoinColumn(name = "usuario_id", referencedColumnName = "id")
     private Usuario usuario;
 
     public Long getId() {

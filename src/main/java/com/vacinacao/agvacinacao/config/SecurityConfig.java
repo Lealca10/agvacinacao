@@ -29,6 +29,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/auth/login").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/usuarios").permitAll()
+                .requestMatchers(HttpMethod.DELETE, "/api/usuarios/**").hasAuthority("ADMIN")
                 .requestMatchers(HttpMethod.POST, "/api/pacientes").permitAll()
                 .requestMatchers(HttpMethod.PUT, "/api/usuarios/recuperar-senha").permitAll()
                 .requestMatchers(HttpMethod.GET, "/doencas").permitAll()

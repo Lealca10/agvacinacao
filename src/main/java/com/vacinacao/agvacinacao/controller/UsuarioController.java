@@ -3,6 +3,7 @@ package com.vacinacao.agvacinacao.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -87,6 +88,17 @@ public class UsuarioController {
         resposta.put("usuario", usuarioAtualizado);
 
         return ResponseEntity.ok(resposta);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> excluirUsuario(@PathVariable Long id) {
+        try {
+            usuarioService.excluirUsuarioComPaciente(id);
+            return ResponseEntity.ok("Usuário e paciente excluídos com sucesso.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Erro ao excluir: " + e.getMessage());
+        }
     }
 
 }

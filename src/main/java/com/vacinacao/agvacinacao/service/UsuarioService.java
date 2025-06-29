@@ -5,8 +5,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.vacinacao.agvacinacao.dto.UsuarioDTO;
+import com.vacinacao.agvacinacao.model.Paciente;
 import com.vacinacao.agvacinacao.model.Usuario;
+import com.vacinacao.agvacinacao.repository.PacienteRepository;
 import com.vacinacao.agvacinacao.repository.UsuarioRepository;
+
+import jakarta.transaction.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,6 +20,9 @@ public class UsuarioService {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private PacienteRepository pacienteRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -81,4 +88,22 @@ public class UsuarioService {
     public void deletar(Long id) {
         usuarioRepository.deleteById(id);
     }
+
+    @Transactional
+    public void excluirUsuarioComPaciente(Long idUsuario) {
+        Optional<Usuario> usuarioOpt = usuarioRepository.findById(idUsuario);
+        if (usuarioOpt.isEmpty()) {
+            throw new RuntimeException("Usuário não encontrado.");
+        }
+
+        Usuario usuario = usuarioOpt.get();
+
+        // Remove paciente vinculado, se houver
+        Optional<Paciente> paciente = pacienteRepository.findByUsuario(usuario);
+        paciente.ifPresent(p -> pacienteRepository.delete(p));
+
+        // Remove usuário
+        usuarioRepository.delete(usuario);
+    }
+
 }
