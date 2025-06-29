@@ -1,6 +1,7 @@
 package com.vacinacao.agvacinacao.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.vacinacao.agvacinacao.dto.VacinaDTO;
@@ -35,9 +36,15 @@ public class VacinaController {
         return new VacinaDTO(vacina);
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<VacinaDTO> atualizar(@PathVariable Long id, @RequestBody VacinaDTO dto) {
+        Vacina atualizada = vacinaService.atualizar(id, dto);
+        return ResponseEntity.ok(new VacinaDTO(atualizada));
+    }
+
     @PutMapping("/{id}/incrementar")
     public void incrementar(@PathVariable Long id, @RequestParam int quantidade) {
-        vacinaService.incrementarQuantidade(id, quantidade);
+        vacinaService.decrementarQuantidade(id, quantidade);
     }
 
     @PutMapping("/{id}/decrementar")

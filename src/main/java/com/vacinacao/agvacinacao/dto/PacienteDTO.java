@@ -20,11 +20,14 @@ public class PacienteDTO {
     private String cidade;
     private String estado;
 
-    public PacienteDTO() {}
-    
+    public PacienteDTO() {
+    }
+
     public PacienteDTO(Paciente paciente) {
         this.id = paciente.getId();
-        this.nome = paciente.getNome();
+        this.nome = paciente.getUsuario().getNome();
+        this.email = paciente.getUsuario().getEmail();
+        this.senha = paciente.getUsuario().getSenha();
         this.dataNascimento = paciente.getDataNascimento();
         this.cpf = paciente.getCpf();
         this.rua = paciente.getRua();
@@ -33,6 +36,7 @@ public class PacienteDTO {
         this.cidade = paciente.getCidade();
         this.estado = paciente.getEstado();
     }
+
     // Getters e Setters
     public Long getId() {
         return id;
@@ -45,51 +49,67 @@ public class PacienteDTO {
     public String getNome() {
         return nome;
     }
+
     public void setNome(String nome) {
         this.nome = nome;
     }
+
     public LocalDate getDataNascimento() {
         return dataNascimento;
     }
+
     public void setDataNascimento(LocalDate dataNascimento) {
         this.dataNascimento = dataNascimento;
     }
+
     public String getCpf() {
         return cpf;
     }
+
     public void setCpf(String cpf) {
         this.cpf = cpf;
     }
+
     public String getRua() {
         return rua;
     }
+
     public void setRua(String rua) {
         this.rua = rua;
     }
+
     public String getNumero() {
         return numero;
     }
+
     public void setNumero(String numero) {
         this.numero = numero;
     }
+
     public String getBairro() {
         return bairro;
     }
+
     public void setBairro(String bairro) {
         this.bairro = bairro;
     }
+
     public String getCidade() {
         return cidade;
     }
+
     public void setCidade(String cidade) {
         this.cidade = cidade;
     }
+
     public String getEstado() {
         return estado;
     }
+
     public void setEstado(String estado) {
         this.estado = estado;
     }
+
     public String getEmail() {
         return email;
     }

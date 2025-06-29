@@ -7,6 +7,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.Transient;
 
 @Entity
 public class Paciente {
@@ -35,8 +36,9 @@ public class Paciente {
         this.id = id;
     }
 
+    @Transient
     public String getNome() {
-        return nome;
+        return usuario != null ? usuario.getNome() : null;
     }
 
     public void setNome(String nome) {
@@ -109,5 +111,4 @@ public class Paciente {
         this.usuario = usuario;
     }
 
-    
 }

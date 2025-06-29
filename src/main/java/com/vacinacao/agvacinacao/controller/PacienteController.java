@@ -9,6 +9,7 @@ import com.vacinacao.agvacinacao.repository.UsuarioRepository;
 import com.vacinacao.agvacinacao.service.PacienteService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -63,5 +64,30 @@ public class PacienteController {
         Paciente paciente = pacienteService.buscarPorId(id)
                 .orElseThrow(() -> new RuntimeException("Paciente não encontrado"));
         return new PacienteDTO(paciente);
+    }
+
+    @GetMapping("/me")
+    public PacienteDTO getPacienteDoUsuarioLogado() {
+        String email = getUsuarioLogadoEmail();
+        Usuario usuario = usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+        Paciente paciente = pacienteRepository.findByUsuario(usuario)
+                .orElseThrow(() -> new RuntimeException("Paciente não encontrado para o usuário"));
+
+        return new PacienteDTO(paciente);
+    }
+
+    @GetMapping("/usuario/{usuarioId}")
+    public PacienteDTO buscarPorUsuarioId(@PathVariable Long usuarioId) {
+        Paciente paciente = pacienteRepository.findByUsuarioId(usuarioId)
+                .orElseThrow(() -> new RuntimeException("Paciente não encontrado"));
+        return new PacienteDTO(paciente);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Void> atualizar(@PathVariable Long id, @RequestBody PacienteDTO dto) {
+        pacienteService.atualizar(id, dto);
+        return ResponseEntity.ok().build();
     }
 }

@@ -8,8 +8,10 @@ import com.vacinacao.agvacinacao.repository.PacienteRepository;
 import com.vacinacao.agvacinacao.repository.UsuarioRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -34,6 +36,12 @@ public class PacienteService {
     // Buscar paciente por ID
     public Optional<Paciente> buscarPorId(Long id) {
         return pacienteRepository.findById(id);
+    }
+
+    public PacienteDTO buscarPorUsuarioId(Long usuarioId) {
+        Paciente paciente = pacienteRepository.findByUsuarioId(usuarioId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Paciente não encontrado"));
+        return new PacienteDTO(paciente);
     }
 
     // Buscar paciente por CPF
@@ -73,22 +81,20 @@ public class PacienteService {
     }
 
     // Atualizar paciente
-    public Paciente atualizar(Long id, Paciente pacienteAtualizado) {
-        Optional<Paciente> pacienteOptional = pacienteRepository.findById(id);
-        if (pacienteOptional.isPresent()) {
-            Paciente pacienteExistente = pacienteOptional.get();
-            pacienteExistente.setNome(pacienteAtualizado.getNome());
-            pacienteExistente.setDataNascimento(pacienteAtualizado.getDataNascimento());
-            pacienteExistente.setCpf(pacienteAtualizado.getCpf());
-            pacienteExistente.setRua(pacienteAtualizado.getRua());
-            pacienteExistente.setNumero(pacienteAtualizado.getNumero());
-            pacienteExistente.setBairro(pacienteAtualizado.getBairro());
-            pacienteExistente.setCidade(pacienteAtualizado.getCidade());
-            pacienteExistente.setEstado(pacienteAtualizado.getEstado());
-            return pacienteRepository.save(pacienteExistente);
-        } else {
-            throw new RuntimeException("Paciente não encontrado com ID: " + id);
-        }
+    public Paciente atualizar(Long id, PacienteDTO dto) {
+        Paciente paciente = pacienteRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Paciente não encontrado com ID: " + id));
+
+        paciente.setNome(dto.getNome());
+        paciente.setDataNascimento(dto.getDataNascimento());
+        paciente.setCpf(dto.getCpf());
+        paciente.setRua(dto.getRua());
+        paciente.setNumero(dto.getNumero());
+        paciente.setBairro(dto.getBairro());
+        paciente.setCidade(dto.getCidade());
+        paciente.setEstado(dto.getEstado());
+
+        return pacienteRepository.save(paciente);
     }
 
     // Deletar paciente
